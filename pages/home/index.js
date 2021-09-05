@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -27,7 +27,6 @@ export default function HomeScreen({ navigation }) {
   const [isError, setError] = useState(false);
   const [isEmpty, setEmpty] = useState(false);
   const [data, setData] = useState([]);
-
   const win = Dimensions.get("window");
 
   useEffect(() => {
@@ -302,14 +301,16 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
       )}
-      <FlatList
-        horizontal
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        style={{ maxHeight: 410 }}
-        persistentScrollbar={true}
-      />
+      {data.length > 0 && (
+        <FlatList
+          horizontal
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          style={{ maxHeight: 410 }}
+          persistentScrollbar={true}
+        />
+      )}
     </SafeAreaView>
   );
 }
