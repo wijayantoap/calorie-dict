@@ -114,7 +114,7 @@ export default function HomeScreen({ navigation }) {
       }
       return (
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("Details")}
+          onPress={() => navigation.navigate("Details", item)}
         >
           <View style={{ ...styles.imageContainer }}>
             <Image
@@ -149,7 +149,7 @@ export default function HomeScreen({ navigation }) {
       }
       return (
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("Details")}
+          onPress={() => navigation.navigate("Details", item)}
         >
           <View style={{ ...styles.imageContainer }}>
             <Image
