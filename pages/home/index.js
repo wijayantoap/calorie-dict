@@ -9,17 +9,20 @@ import {
   View,
   Image,
   Dimensions,
-  ScrollView,
   FlatList,
+  Keyboard,
 } from "react-native";
 import SearchIcon from "../../assets/search.png";
+import EdamamIcon from "../../assets/edamam.png";
+import FoodPlaceholder from "../../assets/food-placeholder.jpg";
 import { LinearGradient } from "expo-linear-gradient";
+import LottieView from "lottie-react-native";
 
 export default function HomeScreen({ navigation }) {
   const [text, onChangeText] = useState("Chicken");
   const [filter, setFilter] = useState("calories");
 
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
   const win = Dimensions.get("window");
@@ -54,6 +57,12 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleSearch = () => {
+    Keyboard.dismiss();
+    setTimeout(function () {
+      setLoading(true);
+      setData([]);
+    }, 100);
+
     fetch(
       `https://api.edamam.com/api/food-database/v2/parser?app_id=ce021308&app_key=0a52d0248fcf11662007595bbd7286ee&ingr=${text}`
     )
@@ -70,9 +79,13 @@ export default function HomeScreen({ navigation }) {
       <TouchableWithoutFeedback onPress={() => navigation.navigate("Details")}>
         <View style={{ ...styles.imageContainer }}>
           <Image
-            source={{
-              uri: item.food.image,
-            }}
+            source={
+              item.food.image
+                ? {
+                    uri: item.food.image,
+                  }
+                : FoodPlaceholder
+            }
             style={{
               width: win.width - 68,
               height: 400,
@@ -93,6 +106,7 @@ export default function HomeScreen({ navigation }) {
           style={styles.input}
           onChangeText={onChangeText}
           value={text}
+          onSubmitEditing={handleSearch}
         />
         <TouchableWithoutFeedback onPress={handleSearch}>
           <Image style={styles.searchLogo} source={SearchIcon} />
@@ -126,6 +140,23 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </LinearGradient>
       </View>
+      <Image
+        source={EdamamIcon}
+        resizeMode={"contain"}
+        style={{
+          width: win.width - 48,
+          height: 40,
+          borderRadius: 12,
+          marginBottom: 8,
+        }}
+      />
+      {isLoading && (
+        <LottieView
+          autoPlay
+          loop
+          source={require("../../assets/food-carousel.json")}
+        />
+      )}
       <FlatList
         horizontal
         data={data}
@@ -156,7 +187,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 8,
   },
   input: {
     borderRadius: 20,
