@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import FoodPlaceholder from "../../assets/food-placeholder.jpg";
+import { AdMobBanner } from "expo-ads-admob";
 
 export default function DetailsScreen({ navigation, route }) {
   const [showNutritions, setShowNutritions] = useState(true);
@@ -48,6 +49,12 @@ export default function DetailsScreen({ navigation, route }) {
               borderRadius: 12,
               marginBottom: 20,
             }}
+          />
+          <AdMobBanner
+            bannerSize="largeBanner"
+            adUnitID="ca-app-pub-1112252263707173/4310853595" // Test ID, Replace with your-admob-unit-id
+            servePersonalizedAds
+            style={{ alignSelf: "center", marginBottom: 20 }}
           />
           <View>
             <View
@@ -331,6 +338,12 @@ export default function DetailsScreen({ navigation, route }) {
                   renderIngredients(item, index)
                 )}
             </View>
+            <AdMobBanner
+              bannerSize="mediumRectangle"
+              adUnitID="ca-app-pub-1112252263707173/1259531880"
+              servePersonalizedAds
+              style={{ alignSelf: "center", marginBottom: 20 }}
+            />
           </View>
         </View>
       );

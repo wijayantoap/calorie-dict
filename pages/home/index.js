@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -17,6 +17,7 @@ import EdamamIcon from "../../assets/edamam.png";
 import FoodPlaceholder from "../../assets/food-placeholder.jpg";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
+import { AdMobBanner } from "expo-ads-admob";
 
 export default function HomeScreen({ navigation }) {
   const [text, onChangeText] = useState("");
@@ -311,6 +312,13 @@ export default function HomeScreen({ navigation }) {
           persistentScrollbar={true}
         />
       )}
+      <View style={{ flex: 1 }} />
+      <AdMobBanner
+        bannerSize="smartBannerPortrait"
+        adUnitID="ca-app-pub-1112252263707173/1890087270" // Test ID, Replace with your-admob-unit-id
+        servePersonalizedAds
+        style={{ marginLeft: -24 }}
+      />
     </SafeAreaView>
   );
 }
