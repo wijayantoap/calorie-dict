@@ -102,7 +102,14 @@ export default function HomeScreen({ navigation }) {
               borderRadius: 12,
             }}
           />
-          <Text style={styles.foodName}>{item.food.label}</Text>
+          <View style={styles.textFoodContainer}>
+            <Text style={styles.foodName}>{item.food.label}</Text>
+            <Text style={styles.foodDetails}>
+              {Math.round(item.food.nutrients.ENERC_KCAL)} kcal I{" "}
+              {Math.round(item.food.nutrients.PROCNT)} g protein I{"\n"}
+              {Math.round(item.food.nutrients.FAT)} g fat @ 100 g
+            </Text>
+          </View>
         </View>
       </TouchableWithoutFeedback>
     );
@@ -264,12 +271,22 @@ const styles = StyleSheet.create({
     maxHeight: 400,
     marginRight: 12,
   },
-  foodName: {
+  textFoodContainer: {
     position: "absolute",
     bottom: 24,
     left: 12,
+  },
+  foodName: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "white",
+    maxWidth: 200,
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+  },
+  foodDetails: {
+    fontSize: 14,
     color: "white",
     maxWidth: 200,
     textShadowColor: "rgba(0, 0, 0, 0.6)",
