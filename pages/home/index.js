@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -28,6 +28,10 @@ export default function HomeScreen({ navigation }) {
   const [data, setData] = useState([]);
 
   const win = Dimensions.get("window");
+
+  useEffect(() => {
+    setData([]);
+  }, [filter]);
 
   const getFirstColor = (val) => {
     if (filter === val) {
@@ -67,52 +71,115 @@ export default function HomeScreen({ navigation }) {
       setError(false);
     }, 100);
 
-    fetch(
-      `https://api.edamam.com/api/food-database/v2/parser?app_id=ce021308&app_key=0a52d0248fcf11662007595bbd7286ee&ingr=${text}`
-    )
-      .then((response) => response.json())
-      .then((json) => {
-        setData(json.hints);
-        if (json.hints.length === 0) {
-          setEmpty(true);
-        }
-      })
-      .catch((error) => {
-        setError(true);
-        console.log(error);
-      })
-      .finally(() => setLoading(false));
+    if (filter === "calories") {
+      fetch(
+        `https://api.edamam.com/api/food-database/v2/parser?app_id=ce021308&app_key=0a52d0248fcf11662007595bbd7286ee&ingr=${text}`
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          setData(json.hints);
+          if (json.hints.length === 0) {
+            setEmpty(true);
+          }
+        })
+        .catch((error) => {
+          setError(true);
+          console.log(error);
+        })
+        .finally(() => setLoading(false));
+    }
+    if (filter === "recipes") {
+      fetch(
+        `https://api.edamam.com/api/recipes/v2?type=public&app_id=5851fcb8&app_key=bbb065b226f55bbe361ce6cfec92dd57&q=${text}`
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          setData(json.hits);
+          if (json.hits.length === 0) {
+            setEmpty(true);
+          }
+        })
+        .catch((error) => {
+          setError(true);
+          console.log(error);
+        })
+        .finally(() => setLoading(false));
+    }
   };
 
   const renderItem = ({ item }) => {
-    return (
-      <TouchableWithoutFeedback onPress={() => navigation.navigate("Details")}>
-        <View style={{ ...styles.imageContainer }}>
-          <Image
-            source={
-              item.food.image
-                ? {
-                    uri: item.food.image,
-                  }
-                : FoodPlaceholder
-            }
-            style={{
-              width: win.width - 68,
-              height: 400,
-              borderRadius: 12,
-            }}
-          />
-          <View style={styles.textFoodContainer}>
-            <Text style={styles.foodName}>{item.food.label}</Text>
-            <Text style={styles.foodDetails}>
-              {Math.round(item.food.nutrients.ENERC_KCAL)} kcal I{" "}
-              {Math.round(item.food.nutrients.PROCNT)} g protein I{"\n"}
-              {Math.round(item.food.nutrients.FAT)} g fat @ 100 g
-            </Text>
+    if (filter === "calories") {
+      if (!item.food) {
+        return null;
+      }
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate("Details")}
+        >
+          <View style={{ ...styles.imageContainer }}>
+            <Image
+              source={
+                item.food.image
+                  ? {
+                      uri: item.food.image,
+                    }
+                  : FoodPlaceholder
+              }
+              style={{
+                width: win.width - 68,
+                height: 400,
+                borderRadius: 12,
+              }}
+            />
+            <View style={styles.textFoodContainer}>
+              <Text style={styles.foodName}>{item.food.label}</Text>
+              <Text style={styles.foodDetails}>
+                {Math.round(item.food.nutrients.ENERC_KCAL)} kcal I{" "}
+                {Math.round(item.food.nutrients.PROCNT)} g protein I{"\n"}
+                {Math.round(item.food.nutrients.FAT)} g fat @ 100 g
+              </Text>
+            </View>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    );
+        </TouchableWithoutFeedback>
+      );
+    }
+    if (filter === "recipes") {
+      if (!item.recipe) {
+        return null;
+      }
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate("Details")}
+        >
+          <View style={{ ...styles.imageContainer }}>
+            <Image
+              source={
+                item.recipe.image
+                  ? {
+                      uri: item.recipe.image,
+                    }
+                  : FoodPlaceholder
+              }
+              style={{
+                width: win.width - 68,
+                height: 400,
+                borderRadius: 12,
+              }}
+            />
+            <View style={styles.textFoodContainer}>
+              <Text style={styles.foodName}>{item.recipe.label}</Text>
+              <Text style={styles.foodDetails}>
+                {Math.round(item.recipe.calories)} kcal I{" "}
+                {Math.round(item.recipe.totalNutrients.PROCNT.quantity)} g
+                protein I{"\n"}{" "}
+                {Math.round(item.recipe.totalNutrients.FAT.quantity)} g fat @{" "}
+                {Math.round(item.recipe.yield)} servings
+              </Text>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      );
+    }
   };
 
   return (
