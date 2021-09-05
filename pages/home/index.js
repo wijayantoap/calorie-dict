@@ -23,6 +23,8 @@ export default function HomeScreen({ navigation }) {
   const [filter, setFilter] = useState("calories");
 
   const [isLoading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isEmpty, setEmpty] = useState(false);
   const [data, setData] = useState([]);
 
   const win = Dimensions.get("window");
@@ -61,6 +63,8 @@ export default function HomeScreen({ navigation }) {
     setTimeout(function () {
       setLoading(true);
       setData([]);
+      setEmpty(false);
+      setError(false);
     }, 100);
 
     fetch(
@@ -69,8 +73,14 @@ export default function HomeScreen({ navigation }) {
       .then((response) => response.json())
       .then((json) => {
         setData(json.hints);
+        if (json.hints.length === 0) {
+          setEmpty(true);
+        }
       })
-      .catch((error) => console.error(error))
+      .catch((error) => {
+        setError(true);
+        console.log(error);
+      })
       .finally(() => setLoading(false));
   };
 
@@ -156,6 +166,44 @@ export default function HomeScreen({ navigation }) {
           loop
           source={require("../../assets/food-carousel.json")}
         />
+      )}
+      {isEmpty && (
+        <View
+          style={{
+            alignSelf: "center",
+          }}
+        >
+          <LottieView
+            autoPlay
+            loop
+            source={require("../../assets/empty.json")}
+            style={{
+              height: 200,
+            }}
+          />
+          <Text style={{ textAlign: "center", marginTop: 8 }}>
+            No result found,{"\n"}try something else
+          </Text>
+        </View>
+      )}
+      {isError && (
+        <View
+          style={{
+            alignSelf: "center",
+          }}
+        >
+          <LottieView
+            autoPlay
+            loop
+            source={require("../../assets/error.json")}
+            style={{
+              height: 200,
+            }}
+          />
+          <Text style={{ textAlign: "center", marginTop: 8 }}>
+            Something went wrong,{"\n"}try again later
+          </Text>
+        </View>
       )}
       <FlatList
         horizontal
