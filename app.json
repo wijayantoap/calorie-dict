@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Calorie Dict",
+    "name": "Calorie Dict - Calorie Count & Recipes",
     "slug": "calorie-dict",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,6 +20,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.wapplabb.caloriedict",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
