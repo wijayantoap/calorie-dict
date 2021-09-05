@@ -1,71 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
   StatusBar,
   Text,
   View,
   Image,
   Dimensions,
-  FlatList,
-  Keyboard,
   ScrollView,
 } from "react-native";
-import SearchIcon from "../../assets/search.png";
-import EdamamIcon from "../../assets/edamam.png";
 import FoodPlaceholder from "../../assets/food-placeholder.jpg";
-import { LinearGradient } from "expo-linear-gradient";
-import LottieView from "lottie-react-native";
 
 export default function DetailsScreen({ navigation, route }) {
-  const [text, onChangeText] = useState("Chicken");
-  const [filter, setFilter] = useState("calories");
   const [showNutritions, setShowNutritions] = useState(true);
+  const [showCautions, setShowCautions] = useState(true);
+  const [showIngredients, setShowIngredients] = useState(true);
 
   const win = Dimensions.get("window");
 
-  console.log(route.params.food);
-
   const renderItem = () => {
-    if (route.params.food) {
-      const item = route.params.food;
-      return (
-        <View style={{ ...styles.itemContainer }}>
-          <Text style={styles.headline}>{item.label}</Text>
-          <Image
-            source={
-              item.image
-                ? {
-                    uri: item.image,
-                  }
-                : FoodPlaceholder
-            }
-            style={{
-              width: win.width - 68,
-              height: 300,
-              borderRadius: 12,
-            }}
-          />
-          <View style={styles.textFoodContainer}>
-            <Text style={styles.foodName}>
-              {route.params.food.label || route.params.recipe.label}
-            </Text>
-            <Text style={styles.foodDetails}>
-              {Math.round(item.nutrients.ENERC_KCAL)} kcal I{" "}
-              {Math.round(item.nutrients.PROCNT)} g protein I{"\n"}
-              {Math.round(item.nutrients.FAT)} g fat @ 100 g
-            </Text>
-          </View>
-        </View>
-      );
-    }
     if (route.params.recipe) {
       const item = route.params.recipe;
       return (
         <View style={{ ...styles.itemContainer }}>
-          <Text style={styles.headline}>{item.label}</Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text
+              style={{ ...styles.headline, color: "#ABAAAA" }}
+              onPress={() => navigation.pop()}
+            >
+              {String.fromCharCode(8592)}
+            </Text>
+            <Text style={{ ...styles.headline, flex: 1, marginRight: 24 }}>
+              {item.label}
+            </Text>
+          </View>
           <Image
             source={
               item.image
@@ -117,15 +85,10 @@ export default function DetailsScreen({ navigation, route }) {
             </View>
             <View>
               <Text
-                style={{
-                  fontSize: 18,
-                  color: "#82b088",
-                  fontWeight: "bold",
-                  marginBottom: 8,
-                }}
+                style={styles.headerTitle}
                 onPress={() => setShowNutritions(!showNutritions)}
               >
-                Nutritions{" "}
+                {String.fromCharCode(9878)} Nutritions{" "}
                 {showNutritions
                   ? String.fromCharCode(8613)
                   : String.fromCharCode(8628)}
@@ -327,10 +290,47 @@ export default function DetailsScreen({ navigation, route }) {
                 </View>
               )}
             </View>
-            <Text style={styles.foodDetails}>
-              I {Math.round(item.totalNutrients.PROCNT.quantity)} g protein I
-              {"\n"} {Math.round(item.totalNutrients.FAT.quantity)} g fat @{" "}
-            </Text>
+            <View>
+              <Text
+                style={styles.headerTitle}
+                onPress={() => setShowCautions(!showCautions)}
+              >
+                {String.fromCharCode(9757)} Cautions{" "}
+                {showCautions
+                  ? String.fromCharCode(8613)
+                  : String.fromCharCode(8628)}
+              </Text>
+              {showCautions &&
+                item.cautions.map((val, index) => (
+                  <Text
+                    key={index}
+                    style={{
+                      backgroundColor: "#f57242",
+                      padding: 8,
+                      color: "white",
+                      marginLeft: 24,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {val}
+                  </Text>
+                ))}
+            </View>
+            <View>
+              <Text
+                style={styles.headerTitle}
+                onPress={() => setShowIngredients(!showIngredients)}
+              >
+                {String.fromCharCode(9982)} Ingredients{" "}
+                {showIngredients
+                  ? String.fromCharCode(8613)
+                  : String.fromCharCode(8628)}
+              </Text>
+              {showIngredients &&
+                item.ingredients.map((item, index) =>
+                  renderIngredients(item, index)
+                )}
+            </View>
           </View>
         </View>
       );
@@ -370,37 +370,45 @@ export default function DetailsScreen({ navigation, route }) {
     );
   };
 
+  const renderIngredients = (item, index) => {
+    return (
+      <View
+        key={index}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "white",
+          marginBottom: 12,
+          padding: 12,
+          borderRadius: 12,
+        }}
+      >
+        <Image
+          source={
+            item.image
+              ? {
+                  uri: item.image,
+                }
+              : FoodPlaceholder
+          }
+          style={{ width: 60, height: 60, borderRadius: 12 }}
+        />
+        <Text
+          style={{
+            color: "black",
+            maxWidth: 280,
+            marginHorizontal: 12,
+          }}
+        >
+          {item.text}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <View style={styles.filterContainer}>
-        <LinearGradient
-          colors={["#26B96E", "#68BD70"]}
-          style={styles.filter}
-          start={[0, 1]}
-          end={[1, 0]}
-        >
-          <Text
-            style={{ color: filter === "calories" ? "white" : "#CDCDCD" }}
-            onPress={() => setFilter("calories")}
-          >
-            Calories
-          </Text>
-        </LinearGradient>
-        <LinearGradient
-          colors={["#26B96E", "#68BD70"]}
-          style={styles.filter}
-          start={[0, 1]}
-          end={[1, 0]}
-        >
-          <Text
-            style={{ color: filter === "recipes" ? "white" : "#CDCDCD" }}
-            onPress={() => setFilter("recipes")}
-          >
-            Recipes
-          </Text>
-        </LinearGradient>
-      </View> */}
         {renderItem()}
       </ScrollView>
     </SafeAreaView>
@@ -477,5 +485,11 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  headerTitle: {
+    fontSize: 18,
+    color: "#82b088",
+    fontWeight: "bold",
+    marginBottom: 8,
   },
 });

@@ -19,8 +19,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
 
 export default function HomeScreen({ navigation }) {
-  const [text, onChangeText] = useState("Chicken");
+  const [text, onChangeText] = useState("");
   const [filter, setFilter] = useState("calories");
+  const [placeholder, setPlaceholder] = useState("");
 
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
@@ -31,7 +32,24 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     setData([]);
+    setPlaceholder(getPlaceholder());
   }, [filter]);
+
+  const getPlaceholder = () => {
+    const num = Math.floor(Math.random() * 10 + 1);
+    if (num < 2) {
+      return "Try chicken for today?";
+    }
+    if (num >= 2 && num < 4) {
+      return "What about beef..";
+    }
+    if (num >= 4 && num < 7) {
+      return "Hungry for spaghetti?";
+    }
+    if (num >= 7) {
+      return "Pizza sounds great!";
+    }
+  };
 
   const getFirstColor = (val) => {
     if (filter === val) {
@@ -55,14 +73,18 @@ export default function HomeScreen({ navigation }) {
 
   const getHeadline = () => {
     if (filter === "calories") {
-      return `Find Calories${"\n"}Within Your Food`;
+      return `Find calories${"\n"}in your food`;
     }
     if (filter === "recipes") {
-      return `Look for Quick${"\n"}and Easy Recipes`;
+      return `Quick and eaasy${"\n"}recipes in your hand`;
     }
   };
 
   const handleSearch = () => {
+    if (!text) {
+      setPlaceholder("Hey! Fill me up first..");
+      return;
+    }
     Keyboard.dismiss();
     setTimeout(function () {
       setLoading(true);
@@ -114,7 +136,7 @@ export default function HomeScreen({ navigation }) {
       }
       return (
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("Details", item)}
+          onPress={() => alert("Details only available for recipes")}
         >
           <View style={{ ...styles.imageContainer }}>
             <Image
@@ -191,6 +213,7 @@ export default function HomeScreen({ navigation }) {
           onChangeText={onChangeText}
           value={text}
           onSubmitEditing={handleSearch}
+          placeholder={placeholder}
         />
         <TouchableWithoutFeedback onPress={handleSearch}>
           <Image style={styles.searchLogo} source={SearchIcon} />
