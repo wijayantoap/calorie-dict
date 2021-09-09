@@ -76,7 +76,7 @@ export default function HomeScreen({ navigation }) {
       return `Find calories${"\n"}in your food`;
     }
     if (filter === "recipes") {
-      return `Quick and eaasy${"\n"}recipes in your hand`;
+      return `Quickly access${"\n"}recipes in your hand`;
     }
   };
 
